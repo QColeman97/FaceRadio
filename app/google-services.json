@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "499196572826",
+    "firebase_url": "https://face-radio.firebaseio.com",
+    "project_id": "face-radio",
+    "storage_bucket": "face-radio.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:499196572826:android:39c6a590893bf9bd",
+        "android_client_info": {
+          "package_name": "com.android.quinnmc.faceradio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "499196572826-cnmklsri6i97mm901nd18o1eedmgsvbh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.quinnmc.faceradio",
+            "certificate_hash": "87717624389b0b2446db0e285a2d7de6db28275c"
+          }
+        },
+        {
+          "client_id": "499196572826-trdc5kq2nut99aiv1n50keuhf738v9nl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJsXbHpbWWpj6n1xw0vb24hC_ZFfgsRao"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "499196572826-trdc5kq2nut99aiv1n50keuhf738v9nl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
