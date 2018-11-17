@@ -57,6 +57,9 @@ class FaceDetectionProcessor : VisionProcessorBase<List<FirebaseVisionFace>>() {
             val cameraFacing = frameMetadata.cameraFacing
             val faceGraphic = FaceGraphic(graphicOverlay, face, cameraFacing)
             graphicOverlay.add(faceGraphic)
+            Log.d(TAG, "HAPPINESS PROBABILITY = " + face.smilingProbability.toString())
+            Log.d(TAG, "LEFT EYE OPEN PROBABILITY = " + face.leftEyeOpenProbability.toString())
+            Log.d(TAG, "RIGHT EYE OPEN PROBABILITY = " + face.rightEyeOpenProbability.toString())
         }
         graphicOverlay.postInvalidate()
         Log.d(TAG, "successful face detection")

@@ -24,15 +24,20 @@
         <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="barcode,face,ocr,ica"/>
+        <activity
+                android:name=".MessageActivity"
+                android:label="Chat with Bob Jameson">
 
+        </activity>
+        <activity
+                android:name=".ProfileActivity"
+                android:label="Bob Jameson's Profile">
+
+        </activity>
         <activity
                 android:name=".MainActivity"
                 android:label="@string/app_name">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>-->
         </activity>
         <activity
                 android:name=".LoginActivity"
@@ -43,6 +48,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

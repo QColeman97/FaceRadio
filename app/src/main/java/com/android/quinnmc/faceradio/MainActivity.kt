@@ -34,19 +34,36 @@ import com.google.android.gms.tasks.OnCompleteListener
 import android.R.attr.password
 import android.app.Activity
 import android.content.Intent
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentActivity
+import android.text.TextUtils.replace
 
 
 /************************************
  *  ADDITIONAL INFO FOR MILESTONE 3:
  *  Setup before-hand to use this app successfully,
  *  1) Have Spotify installed on the running device, and be logged in w/in the Spotify app
+ *          -- making a non-Premium account works fine, if you don't already have one
  *  2) If using the emulator, configure your AVD camera's front and back to be Webcam0 (laptop's camera)
  *
- *  App should:
- *  Log you into firebase, play music after sign in,
- *  start attempting to read your face, let you go to each tab
+ *  * Unfortunate emulator bug I couldn't get around w/o this workaround:
+ *      For MLKit to detect your face,
+ *      you MUST tilt either your head 90 deg right or webcam 90 left
+ *
  *  (MLKit activity should be seen by filtering "MLKit" in Logcat)
+ *  (Bug to know: Now can only detect a face in one of first frames received,
+ *      but you should be able to see something like this: (copy/pasted from my Logcat))
+ *   D/MLKit - Face Det Proc: HAPPINESS PROBABILITY = 0.029783526
+ *   D/MLKit - Face Det Proc: LEFT EYE OPEN PROBABILITY = 0.92879176
+ *   D/MLKit - Face Det Proc: RIGHT EYE OPEN PROBABILITY = 0.6806507
+ *
+ *  Milestone 3 functionality summary:
+ *  Log you into firebase, play music after sign in,
+ *  start attempting to read your face, let you go to each page
+ *
+ *  From profile and msg activites, can get back with the system back-button
+ *  Bug: initial fragment "radio" doesn't appear until you go to another fragment and back
+ *
  * **********************************/
 
 
@@ -81,22 +98,30 @@ class MainActivity() : AppCompatActivity(),
         }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        var selectedFragment: Fragment = RadioFragment()
         when (item.itemId) {
             R.id.navigation_home -> {
-                message.setText(R.string.title_home)
-                return@OnNavigationItemSelectedListener true
+                //message.setText(R.string.title_home)
+                selectedFragment = RadioFragment()
+                //return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
-                message.setText(R.string.title_dashboard)
-                return@OnNavigationItemSelectedListener true
+                //message.setText(R.string.title_dashboard)
+                selectedFragment = SocialFragment()
+                //return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_notifications -> {
-                message.setText(R.string.title_notifications)
-                return@OnNavigationItemSelectedListener true
+                //message.setText(R.string.title_notifications)
+                selectedFragment = SettingsFragment()
+                //return@OnNavigationItemSelectedListener true
             }
         }
+        supportFragmentManager.beginTransaction().
+            replace(R.id.fragment_container, selectedFragment).commit()
         false
     }
+
+    // Just get something from msgs
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
