@@ -14,6 +14,7 @@ import android.content.Intent
 import android.support.v7.app.AlertDialog
 import android.widget.Button
 import android.widget.TextView
+import com.android.quinnmc.faceradio.Deejay.musicToURIMap
 import kotlinx.android.synthetic.main.activity_settings.*
 
 
@@ -27,19 +28,9 @@ class SettingsActivity : AppCompatActivity() {
         val SLEEPY = 3
     }
 
-    val happySongs = ArrayList<String>()
-    val passiveSongs = ArrayList<String>()
-    val sleepySongs = ArrayList<String>()
-
-    val musicToURIMap =
-        hashMapOf("Christmas Hits" to "spotify:user:spotify:playlist:37i9dQZF1DX0Yxoavh5qJV",
-            "Queen" to "spotify:user:spotify:playlist:37i9dQZF1DWSNC7AjZWNry",
-            "Daft Punk" to "spotify:user:spotify:playlist:37i9dQZF1DWZAkrucRF6Gq",
-            "Michael Buble" to "spotify:user:129768214:playlist:6fol9qIRweKG8M7NbbCHSw",
-            "Thrash Metal" to "spotify:user:12127647737:playlist:1DVU0Zy0B5MX5B6ZG7ohfO",
-            "Ariana Grande" to "spotify:user:spotify:playlist:37i9dQZF1DX1PfYnYcpw8w",
-            "Flume" to "spotify:user:spotify:playlist:37i9dQZF1DX7IOI7TbS1hG",
-            "Coffeehouse Tunes" to "spotify:user:spotify:playlist:37i9dQZF1DX6ziVCJnEm59")
+    val happySelections = ArrayList<String>()
+    val passiveSelections = ArrayList<String>()
+    val sleepySelections = ArrayList<String>()
 
     val arrayPlaylists = arrayOf("Christmas Hits", "Queen", "Daft Punk", "Michael Buble",
         "Thrash Metal", "Ariana Grande", "Flume", "Coffeehouse Tunes")
@@ -69,22 +60,21 @@ class SettingsActivity : AppCompatActivity() {
     }
 
     private fun updateUserPlaylists() {
-        val happyURIs = playlistURIs(happySongs)
-        val passiveURIs = playlistURIs(passiveSongs)
-        val sleepyURIs = playlistURIs(sleepySongs)
+        val happyURIs = playlistURIs(happySelections)
+        val passiveURIs = playlistURIs(passiveSelections)
+        val sleepyURIs = playlistURIs(sleepySelections)
 
         if (currentUser != null) {
             val my_id = currentUser!!.uuid
             val ref = FirebaseDatabase.getInstance().getReference("/users/$my_id")
             val new_user = User(currentUser!!.uuid, currentUser!!.username, currentUser!!.profileImageUrl,
-                happyURIs, passiveURIs, sleepyURIs, "", "")
+                happyURIs, passiveURIs, sleepyURIs, currentUser!!.latestEmotion, currentUser!!.latestSong)
             ref.setValue(new_user).addOnSuccessListener {
                 val intent = Intent(this, RadioActivity::class.java)
 //            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
                 startActivity(intent)
             }
         }
-
     }
 
     private fun playlistURIs(playlist: ArrayList<String>): ArrayList<String> {
@@ -113,30 +103,30 @@ class SettingsActivity : AppCompatActivity() {
                 HAPPY -> {
                     for (i in 0 until arrayPlaylists.size) {
                         if (arrayChecked[i]) {
-                            happySongs.add(arrayPlaylists[i])
+                            happySelections.add(arrayPlaylists[i])
                             // new
                             arrayChecked[i] = false
                         }
                     }
-                    happy_selection.text = happySongs.joinToString()
+                    happy_selection.text = happySelections.joinToString()
                 }
                 PASSIVE -> {
                     for (i in 0 until arrayPlaylists.size) {
                         if (arrayChecked[i]) {
-                            passiveSongs.add(arrayPlaylists[i])
+                            passiveSelections.add(arrayPlaylists[i])
                             arrayChecked[i] = false
                         }
                     }
-                    passive_selection.text = passiveSongs.joinToString()
+                    passive_selection.text = passiveSelections.joinToString()
                 }
                 SLEEPY -> {
                     for (i in 0 until arrayPlaylists.size) {
                         if (arrayChecked[i]) {
-                            sleepySongs.add(arrayPlaylists[i])
+                            sleepySelections.add(arrayPlaylists[i])
                             arrayChecked[i] = false
                         }
                     }
-                    sleepy_selection.text = sleepySongs.joinToString()
+                    sleepy_selection.text = sleepySelections.joinToString()
                 }
             }
         }
@@ -144,9 +134,9 @@ class SettingsActivity : AppCompatActivity() {
             for (i in 0 until arrayChecked.size) {
                 arrayChecked[i] = false
                 when (tag) {
-                    HAPPY -> happySongs.clear()
-                    PASSIVE -> passiveSongs.clear()
-                    SLEEPY -> sleepySongs.clear()
+                    HAPPY -> happySelections.clear()
+                    PASSIVE -> passiveSelections.clear()
+                    SLEEPY -> sleepySelections.clear()
                 }
             }
         }
@@ -157,11 +147,11 @@ class SettingsActivity : AppCompatActivity() {
         dialog.show()
 
         println("Happy songs:")
-        println(happySongs)
+        println(happySelections)
         println("Passive songs:")
-        println(passiveSongs)
+        println(passiveSelections)
         println("Sleepy songs:")
-        println(sleepySongs)
+        println(sleepySelections)
     }
 
     private fun fetchCurrentUser() {

@@ -17,6 +17,8 @@ import kotlinx.android.synthetic.main.user_row_new_message.view.*
 
 class NewMessageActivity : AppCompatActivity() {
 
+    var optionalPreset: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_message)
@@ -31,11 +33,14 @@ class NewMessageActivity : AppCompatActivity() {
 
         recyclerView_newMessage.adapter = adapter
 
+        optionalPreset = intent.getStringExtra(RadioFragment.USER_KEY)
+
         fetchUsers()
     }
 
     companion object {
         val USER_KEY = "USER_KEY"
+        val MSG_KEY = "MSG_KEY"
     }
 
     private fun fetchUsers() {
@@ -59,6 +64,9 @@ class NewMessageActivity : AppCompatActivity() {
                     val intent = Intent(view.context, MessageLogActivity::class.java)
                     //intent.putExtra(USER_KEY, item.user.username)
                     intent.putExtra(USER_KEY, userItem.user)
+                    // if from share
+                    intent.putExtra(MSG_KEY, optionalPreset)
+                    //
                     startActivity(intent)
 
                     finish()

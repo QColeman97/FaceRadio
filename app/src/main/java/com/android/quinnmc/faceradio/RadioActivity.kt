@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.startActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.android.quinnmc.faceradio.Deejay.URIToMusicMap
 import com.android.quinnmc.faceradio.Deejay.ref
 import com.android.quinnmc.faceradio.R.id.fireFaceOverlay
 import com.android.quinnmc.faceradio.R.id.firePreview
@@ -100,7 +101,7 @@ class RadioActivity() : AppCompatActivity(),
         when (item.itemId) {
             R.id.navigation_home -> {
 //                selectedFragment = RadioFragment()
-                selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist)
+                selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist, currEmotion)
 
                 supportFragmentManager.beginTransaction().
                     replace(R.id.fragment_container, selectedFragment).commit()
@@ -389,10 +390,13 @@ class RadioActivity() : AppCompatActivity(),
 //        private var selectedFragment: Fragment = RadioFragment()
 //        private var selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist)
 
+        var CURR_EMOTION = "Passively"
+
         private var currFaceGraphic = R.drawable.passive_face
         private var currSong = ""
         private var currArtist = ""
-        private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist)
+        private var currEmotion = CURR_EMOTION
+        private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist, currEmotion)
 
 
         private var mSpotifyAppRemote: SpotifyAppRemote? = null
@@ -422,21 +426,9 @@ class RadioActivity() : AppCompatActivity(),
             }
         }
 
-        val URIToMusicMap =
-            hashMapOf("spotify:user:spotify:playlist:37i9dQZF1DX0Yxoavh5qJV" to "Christmas Hits",
-                "spotify:user:spotify:playlist:37i9dQZF1DWSNC7AjZWNry" to "Queen",
-                "spotify:user:spotify:playlist:37i9dQZF1DWZAkrucRF6Gq" to "Daft Punk",
-                "spotify:user:129768214:playlist:6fol9qIRweKG8M7NbbCHSw" to "Michael Buble",
-                "spotify:user:12127647737:playlist:1DVU0Zy0B5MX5B6ZG7ohfO" to "Thrash Metal",
-                "spotify:user:spotify:playlist:37i9dQZF1DX1PfYnYcpw8w" to "Ariana Grande",
-                "spotify:user:spotify:playlist:37i9dQZF1DX7IOI7TbS1hG" to "Flume",
-                "spotify:user:spotify:playlist:37i9dQZF1DX6ziVCJnEm59" to "Coffeehouse Tunes")
-
-//        var CURR_URI: String? = null
         const val HAPPY = "h"
         const val PASSIVE = "p"
         const val SLEEPY = "s"
-        var CURR_EMOTION = "Passively"
         fun emotionToAdverb(emote: String): String {
             var ret_val = ""
             when (emote) {

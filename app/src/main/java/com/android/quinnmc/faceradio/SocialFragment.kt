@@ -23,8 +23,7 @@ class SocialFragment : Fragment() {
 
     companion object {
         val TAG = "SocialFragment"
-        // Friends
-        //val USER_KEY = "USER_KEY"
+        val USER_KEY = "USER_KEY"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -129,6 +128,7 @@ class SocialFragment : Fragment() {
     private fun toNewMessage() {
         //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
         val newMsgIntent = Intent(activity, NewMessageActivity::class.java)
+        newMsgIntent.putExtra(USER_KEY, "")
         startActivity(newMsgIntent)
     }
 

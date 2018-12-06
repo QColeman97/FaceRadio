@@ -1,5 +1,6 @@
 package com.android.quinnmc.faceradio
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ class RadioFragment : Fragment() {
     var currFaceId: Int? = null
     var currSong: String? = null
     var currArtist: String? = null
+    var currEmotion: String? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -19,6 +21,7 @@ class RadioFragment : Fragment() {
         currFaceId = arguments?.getInt("face")
         currSong = arguments?.getString("track")
         currArtist = arguments?.getString("artist")
+        currEmotion = arguments?.getString("emo")
 
         return inflater.inflate(R.layout.fragment_radio, container, false)
     }
@@ -34,16 +37,32 @@ class RadioFragment : Fragment() {
             by_title.text = "by"
             current_artist_label.text = currArtist
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        share_button.setOnClickListener {
+            toNewPreMessage()
+        }
+    }
+
+    fun toNewPreMessage() {
+        val newMsgIntent = Intent(activity, NewMessageActivity::class.java)
+        val preset = ("I'm " + currEmotion + " listening to " + currSong + " by " + currArtist + "!")
+        newMsgIntent.putExtra(USER_KEY, preset)
+        startActivity(newMsgIntent)
     }
 
     companion object {
 
-        fun newInstance(faceGraphicId: Int, track: String, artist: String) : RadioFragment {
+        val USER_KEY = "USER_KEY"
+
+        fun newInstance(faceGraphicId: Int, track: String, artist: String, emo: String) : RadioFragment {
             val args = Bundle()
             args.putInt("face", faceGraphicId)
             args.putString("track", track)
             args.putString("artist", artist)
+            args.putString("emo", emo)
             val fragment = RadioFragment()
             fragment.arguments = args
             return fragment

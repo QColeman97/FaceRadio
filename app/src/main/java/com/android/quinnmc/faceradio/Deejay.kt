@@ -142,6 +142,26 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
     }
 
 
+    val URIToMusicMap =
+        hashMapOf("spotify:user:spotify:playlist:37i9dQZF1DX0Yxoavh5qJV" to "Christmas Hits",
+            "spotify:user:spotify:playlist:37i9dQZF1DWSNC7AjZWNry" to "Queen",
+            "spotify:user:spotify:playlist:37i9dQZF1DWZAkrucRF6Gq" to "Daft Punk",
+            "spotify:user:spotify:playlist:37i9dQZF1DX5kVmFQxhnLW" to "Michael Buble",
+            "spotify:user:spotify:playlist:37i9dQZF1DWWOaP4H0w5b0" to "Thrash Metal",
+            "spotify:user:spotify:playlist:37i9dQZF1DX1PfYnYcpw8w" to "Ariana Grande",
+            "spotify:user:spotify:playlist:37i9dQZF1DX7IOI7TbS1hG" to "Flume",
+            "spotify:user:spotify:playlist:37i9dQZF1DX6ziVCJnEm59" to "Coffeehouse Tunes")
+
+    val musicToURIMap =
+        hashMapOf("Christmas Hits"      to "spotify:user:spotify:playlist:37i9dQZF1DX0Yxoavh5qJV",
+                  "Queen"               to "spotify:user:spotify:playlist:37i9dQZF1DWSNC7AjZWNry",
+                  "Daft Punk"           to "spotify:user:spotify:playlist:37i9dQZF1DWZAkrucRF6Gq",
+                  "Michael Buble"       to "spotify:user:spotify:playlist:37i9dQZF1DX5kVmFQxhnLW",
+                  "Thrash Metal"        to "spotify:user:spotify:playlist:37i9dQZF1DWWOaP4H0w5b0",
+                  "Ariana Grande"       to "spotify:user:spotify:playlist:37i9dQZF1DX1PfYnYcpw8w",
+                  "Flume"               to "spotify:user:spotify:playlist:37i9dQZF1DX7IOI7TbS1hG",
+                  "Coffeehouse Tunes"   to "spotify:user:spotify:playlist:37i9dQZF1DX6ziVCJnEm59")
+
 //    companion object {
 //        private const val HAPPY = 0
 //        private const val PASSIVE = 1

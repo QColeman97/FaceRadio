@@ -3,6 +3,7 @@ package com.android.quinnmc.faceradio
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
@@ -25,6 +26,7 @@ class MessageLogActivity: AppCompatActivity() {
     val adapter = GroupAdapter<ViewHolder>()
 
     var toUser: User? = null
+    var preSet: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +36,9 @@ class MessageLogActivity: AppCompatActivity() {
 
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
         supportActionBar?.title = toUser?.username
+
+        preSet = intent.getStringExtra(NewMessageActivity.MSG_KEY)
+        editText_chatLog.setText(preSet, TextView.BufferType.EDITABLE)
 
 //        setupDummyData()
         listenForMessages()
