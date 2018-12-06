@@ -54,6 +54,8 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
 
     fun safeAfterNewFace(face: FirebaseVisionFace) {
         //println("COUNTER: ${counter}")
+        if (RadioActivity.mSpotifyAppRemote == null) return
+
         if (prevFace == null || (counter > WAIT && dominantEmotion(face) != dominantEmotion(prevFace!!))) {
             var rand = Random
             var uri = ""

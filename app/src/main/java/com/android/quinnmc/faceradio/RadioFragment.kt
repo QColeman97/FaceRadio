@@ -12,10 +12,19 @@ import kotlinx.android.synthetic.main.fragment_radio.*
 
 class RadioFragment : Fragment() {
 
+    interface RadioFragmentListener{
+//        fun onPlayPause(pause: Boolean)
+        fun onPlayPause()
+        fun onSkipNext()
+        fun onSkipPrev()
+    }
+
     var currFaceId: Int? = null
     var currSong: String? = null
     var currArtist: String? = null
     var currEmotion: String? = null
+    //var paused = false
+
     //var currAlbumCoverBitmap: Bitmap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,6 +41,25 @@ class RadioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        play_pause_btn.setOnClickListener {
+            //paused = !paused
+//            (activity as RadioActivity).onPlayPause(paused)
+            (activity as RadioActivity).onPlayPause()
+
+//            if (paused) {
+//                play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_play)
+//            } else {
+//                play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_pause)
+//            }
+        }
+        next_song_btn.setOnClickListener {
+            (activity as RadioActivity).onSkipNext()
+        }
+        prev_song_btn.setOnClickListener {
+            (activity as RadioActivity).onSkipPrev()
+        }
+
         if (currFaceId != null) {
             expression_graphic.setImageResource(currFaceId!!)
         }

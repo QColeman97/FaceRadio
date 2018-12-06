@@ -69,8 +69,8 @@ import kotlinx.android.synthetic.main.fragment_radio.view.*
 
 
 class RadioActivity() : AppCompatActivity(),
-        ActivityCompat.OnRequestPermissionsResultCallback {//,
-        //Deejay.DeejayListener {
+        ActivityCompat.OnRequestPermissionsResultCallback,
+        RadioFragment.RadioFragmentListener {
 
 //    // Spotify Will do Android's single-sign on, so end Spotify quick-start here
 //    private var mSpotifyAppRemote: SpotifyAppRemote? = null
@@ -192,6 +192,30 @@ class RadioActivity() : AppCompatActivity(),
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPlayPause() {
+        if (mSpotifyAppRemote == null) return
+        mSpotifyAppRemote!!.playerApi.playerState.setResultCallback {
+            if (it.isPaused) {
+                selectedFragment.play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_pause)
+                mSpotifyAppRemote!!.playerApi.resume()
+            } else {
+                selectedFragment.play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_play)
+                mSpotifyAppRemote!!.playerApi.pause()
+            }
+        }
+    }
+
+    override fun onSkipNext() {
+        if (mSpotifyAppRemote == null) return
+        mSpotifyAppRemote!!.playerApi.skipNext()
+    }
+
+    override fun onSkipPrev() {
+        if (mSpotifyAppRemote == null) return
+        mSpotifyAppRemote!!.playerApi.skipPrevious()
+    }
+
+
     /**************************************************************
     ************    SPOTIFY CODE STARTING HERE    *****************
     ***************************************************************/
@@ -238,6 +262,16 @@ class RadioActivity() : AppCompatActivity(),
                                     currArtist = track.artist.name
                                     // Might be a useless call down below
                                     //currAlbumCoverURI = track.imageUri.toString()
+
+                                    // For song progress
+//                                    selectedFragment.song_progress.max = track.duration.toInt()
+//                                    runOnUiThread({
+//                                        var i = 0
+//                                        fun run() {
+//                                            i += 1
+//                                            selectedFragment.song_progress.progress = i
+//                                        }
+//                                    })
 
                                     mSpotifyAppRemote!!.imagesApi.getImage(track.imageUri)
                                         .setResultCallback {
@@ -402,6 +436,8 @@ class RadioActivity() : AppCompatActivity(),
 //        private var selectedFragment: Fragment = RadioFragment()
 //        private var selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist)
 
+        var mSpotifyAppRemote: SpotifyAppRemote? = null
+
         var CURR_EMOTION = "Passively"
 
         private var currFaceGraphic = R.drawable.passive_face
@@ -412,16 +448,17 @@ class RadioActivity() : AppCompatActivity(),
         private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
             currEmotion)
 
-
-        private var mSpotifyAppRemote: SpotifyAppRemote? = null
-
         override fun onNewPlaylist(arr: Array<String>) {
             if (mSpotifyAppRemote != null) {
                 val uri = arr[0]
                 val emotion = arr[1]
                 CURR_EMOTION = emotionToAdverb(emotion)
                 mSpotifyAppRemote!!.getPlayerApi().play(uri)
-                Log.d("Spotify", "Playing playlist")
+                //mSpotifyAppRemote!!.getPlayerApi().resume()
+                Log.d("Spotify", "PLAYING PLAYLIST")
+                selectedFragment.play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_pause)
+
+
 
                 //selectedFragment.expression_graphic.visibility = View.VISIBLE
 //                selectedFragment.current_track_title.visibility = View.VISIBLE

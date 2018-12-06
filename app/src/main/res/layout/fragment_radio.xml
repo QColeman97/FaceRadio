@@ -4,51 +4,81 @@
                 android:layout_height="match_parent">
 
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="260dp"
+            android:layout_height="64dp"
             android:layout_alignParentBottom="true" android:id="@+id/current_track_label"
-            android:layout_marginBottom="188dp"
-            android:textSize="24sp" android:layout_alignStart="@+id/current_artist_label"/>
+            android:layout_marginBottom="169dp"
+            android:textSize="24sp" android:layout_alignStart="@+id/current_artist_label"
+            android:layout_marginStart="-56dp"/>
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+            android:layout_width="82dp"
+            android:layout_height="41dp"
             android:layout_alignParentBottom="true" android:id="@+id/current_artist_label"
-            android:layout_marginBottom="74dp" android:textSize="18sp"/>
+            android:layout_marginBottom="122dp" android:textSize="18sp" android:layout_alignParentStart="true"
+            android:layout_marginLeft="202dp" android:layout_marginStart="202dp" android:layout_alignParentLeft="true"/>
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true" android:layout_marginBottom="142dp" android:id="@+id/by_title"
-            android:layout_alignStart="@+id/current_track_label"/>
+            android:layout_width="67dp"
+            android:layout_height="45dp"
+            android:layout_alignParentBottom="true" android:layout_marginBottom="120dp" android:id="@+id/by_title"
+            android:layout_alignParentStart="true" android:layout_marginLeft="130dp" android:layout_marginStart="130dp"
+            android:layout_alignParentLeft="true"/>
     <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="75dp"
+            android:layout_height="30dp"
             android:layout_alignParentBottom="true" android:id="@+id/current_track_title"
-            android:layout_marginBottom="156dp" android:layout_alignStart="@+id/current_track_label"
-            android:layout_marginStart="-1dp"/>
+            android:layout_marginBottom="190dp" android:layout_alignStart="@+id/current_track_label"
+            android:layout_marginStart="-125dp" android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true" android:layout_marginRight="252dp" android:layout_marginEnd="252dp"/>
     <ImageView
             android:layout_width="259dp"
             android:layout_height="254dp" app:srcCompat="@drawable/ic_launcher_background"
             android:layout_alignParentTop="true" android:id="@+id/album_cover"
-            android:layout_marginTop="57dp" android:layout_alignParentStart="true" android:layout_marginLeft="63dp"
-            android:layout_marginStart="63dp" android:layout_alignParentLeft="true"
-            android:layout_above="@+id/current_track_title" android:layout_marginBottom="26dp"
+            android:layout_marginTop="17dp" android:layout_alignParentStart="true" android:layout_marginLeft="112dp"
+            android:layout_marginStart="112dp" android:layout_alignParentLeft="true"
             android:contentDescription="TODO"
             android:layout_alignParentEnd="true" android:layout_alignParentRight="true"
-            android:layout_marginRight="62dp" android:layout_marginEnd="62dp"/>
+            android:layout_marginRight="13dp" android:layout_marginEnd="13dp"/>
     <ImageView
-            android:layout_width="64dp"
-            android:layout_height="60dp"
+            android:layout_width="85dp"
+            android:layout_height="88dp"
             app:srcCompat="@drawable/passive_face"
             android:id="@+id/expression_graphic"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="10dp" android:layout_above="@+id/current_track_title"
-            android:layout_marginBottom="267dp" android:layout_alignParentStart="true"
-            android:layout_marginStart="12dp"/>
+            android:layout_marginTop="20dp" android:layout_above="@+id/current_track_title"
+            android:layout_marginBottom="182dp" android:layout_alignParentStart="true"
+            android:layout_marginStart="18dp"
+    />
     <Button
             android:text="Share"
             android:layout_width="72dp"
             android:layout_height="wrap_content" android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true" android:id="@+id/share_button" android:layout_marginTop="31dp"
-            android:layout_marginEnd="58dp"/>
+            android:layout_alignParentTop="true" android:id="@+id/share_button" android:layout_marginTop="25dp"
+            android:layout_marginEnd="24dp"/>
+    <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" android:id="@+id/song_progress" android:layout_marginBottom="41dp"
+            android:layout_alignParentStart="true" android:layout_marginStart="0dp"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" android:id="@+id/play_pause_btn" android:layout_marginBottom="63dp"
+            android:background="@android:drawable/ic_media_pause" android:layout_centerHorizontal="true"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_alignEnd="@+id/album_cover"
+            android:layout_alignTop="@+id/play_pause_btn" android:id="@+id/next_song_btn"
+            android:background="@android:drawable/ic_media_next" android:layout_toEndOf="@+id/play_pause_btn"
+            android:layout_toRightOf="@+id/play_pause_btn" android:layout_marginLeft="47dp"
+            android:layout_marginStart="47dp"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:layout_alignTop="@+id/play_pause_btn"
+            android:id="@+id/prev_song_btn"
+            android:layout_alignStart="@+id/expression_graphic"
+            android:background="@android:drawable/ic_media_previous" android:layout_toStartOf="@+id/play_pause_btn"
+            android:layout_marginRight="42dp" android:layout_marginEnd="42dp"
+            android:layout_toLeftOf="@+id/play_pause_btn"/>
 
 </RelativeLayout>
