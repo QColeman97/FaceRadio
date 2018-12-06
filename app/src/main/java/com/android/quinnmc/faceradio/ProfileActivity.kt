@@ -12,6 +12,7 @@ class ProfileActivity: AppCompatActivity() {
 
     companion object {
         val TAG = "Profile"
+        val USER_KEY = "USER_KEY"
     }
 
     val URIToMusicMap =

@@ -28,6 +28,11 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
     var currentUser: User? = null
     var prevFace: FirebaseVisionFace? = null
     var counter = 0
+    private const val WAIT = 120
+
+    // Fore firebase, fetching uri's and setting latest
+    val uid = FirebaseAuth.getInstance().uid
+    val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
     //constructor() : this(arrayListOf<User>())
 
@@ -49,7 +54,7 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
 
     fun safeAfterNewFace(face: FirebaseVisionFace) {
         //println("COUNTER: ${counter}")
-        if (prevFace == null || (counter > 200 && dominantEmotion(face) != dominantEmotion(prevFace!!))) {
+        if (prevFace == null || (counter > WAIT && dominantEmotion(face) != dominantEmotion(prevFace!!))) {
             var rand = Random
             var uri = ""
             var rand_index = 0
@@ -62,6 +67,13 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
                         rand_index = rand.nextInt(currentUser!!.happyPlaylists.size)
 
                         uri = currentUser!!.happyPlaylists[rand_index]
+
+//                        // update user's latest here
+//                        val new_user = User(
+//                            SettingsActivity.currentUser!!.uuid, SettingsActivity.currentUser!!.username, SettingsActivity.currentUser!!.profileImageUrl,
+//                            currentUser!!.happyPlaylists, currentUser!!.passivePlaylists, currentUser!!.sleepyPlaylists, "happy", "")
+
+
                         (RadioActivity as DeejayListener).onNewPlaylist(arrayOf(uri, HAPPY))
                     }
                 }
@@ -101,7 +113,7 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
         val rightEyeProb = face.rightEyeOpenProbability
         val smileProb = face.smilingProbability
 
-        if (leftEyeProb < 0.4 && rightEyeProb < 0.4) {
+        if (leftEyeProb < 0.3 && rightEyeProb < 0.3) {
             return SLEEPY
         } else if (smileProb > 0.5) {
             return HAPPY
@@ -116,8 +128,8 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
 //    }
 
     private fun fetchCurrentUser(face: FirebaseVisionFace) {
-        val uid = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+//        val uid = FirebaseAuth.getInstance().uid
+//        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {

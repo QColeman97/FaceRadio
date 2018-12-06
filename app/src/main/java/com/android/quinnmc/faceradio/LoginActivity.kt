@@ -137,7 +137,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
         val user = User(uid, username.text.toString(), profileImageUrl,
-            arrayListOf<String>(), arrayListOf<String>(), arrayListOf<String>())
+            arrayListOf<String>(), arrayListOf<String>(), arrayListOf<String>(), "", "")
         ref.setValue(user).addOnSuccessListener {
             Log.d("LoginActivity", "Finally saved user to Firebase Database")
 

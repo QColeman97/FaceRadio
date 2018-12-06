@@ -64,12 +64,7 @@ class SettingsActivity : AppCompatActivity() {
 //            sleepy_selection.text = sleepySongs.joinToString()
         }
         continue_button_settings.setOnClickListener {
-
             updateUserPlaylists()
-
-            val intent = Intent(this, RadioActivity::class.java)
-//            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
-            startActivity(intent)
         }
     }
 
@@ -82,8 +77,12 @@ class SettingsActivity : AppCompatActivity() {
             val my_id = currentUser!!.uuid
             val ref = FirebaseDatabase.getInstance().getReference("/users/$my_id")
             val new_user = User(currentUser!!.uuid, currentUser!!.username, currentUser!!.profileImageUrl,
-                happyURIs, passiveURIs, sleepyURIs)
-            ref.setValue(new_user)
+                happyURIs, passiveURIs, sleepyURIs, "", "")
+            ref.setValue(new_user).addOnSuccessListener {
+                val intent = Intent(this, RadioActivity::class.java)
+//            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+            }
         }
 
     }

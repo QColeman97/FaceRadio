@@ -25,6 +25,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.startActivity
 import android.view.Menu
 import android.view.MenuItem
+import com.android.quinnmc.faceradio.Deejay.ref
 import com.android.quinnmc.faceradio.R.id.fireFaceOverlay
 import com.android.quinnmc.faceradio.R.id.firePreview
 import com.android.quinnmc.faceradio.SettingsActivity.Companion.currentUser
@@ -71,6 +72,10 @@ class RadioActivity() : AppCompatActivity(),
 
 //    // Spotify Will do Android's single-sign on, so end Spotify quick-start here
 //    private var mSpotifyAppRemote: SpotifyAppRemote? = null
+
+    // Firebase user vars
+    val uid = FirebaseAuth.getInstance().uid
+    val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
 
     // ML Kit vars
     private var cameraSource: CameraSource? = null
@@ -119,7 +124,6 @@ class RadioActivity() : AppCompatActivity(),
         setContentView(R.layout.activity_radio)
 
         fetchCurrentUser()
-
         verifyUserIsLoggedIn()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -141,8 +145,8 @@ class RadioActivity() : AppCompatActivity(),
     }
 
     private fun fetchCurrentUser() {
-        val uid = FirebaseAuth.getInstance().uid
-        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+//        val uid = FirebaseAuth.getInstance().uid
+//        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
         ref.addListenerForSingleValueEvent(object: ValueEventListener {
 
             override fun onDataChange(p0: DataSnapshot) {
@@ -229,6 +233,18 @@ class RadioActivity() : AppCompatActivity(),
                                     // Set the text here
                                     currSong = track.name
                                     currArtist = track.artist.name
+
+                                    // update user's latest here
+                                    val latest_user = User(currentUser!!.uuid, currentUser!!.username,
+                                        currentUser!!.profileImageUrl, currentUser!!.happyPlaylists,
+                                        currentUser!!.passivePlaylists, currentUser!!.sleepyPlaylists,
+                                        CURR_EMOTION, track.name + " by " + track.artist.name)
+                                    ref.setValue(latest_user).addOnSuccessListener {
+                                        Log.d("SPOTIFY", "Updated firebase user's latest!");
+                                    }
+
+
+                                    // Block could be deleted later?
                                     if (selectedFragment is RadioFragment) {
                                         println("SELECTED FRAG IS RADIO " + track.name + " " + track.artist.name)
                                         selectedFragment.current_track_label.text = currSong
@@ -385,6 +401,7 @@ class RadioActivity() : AppCompatActivity(),
             if (mSpotifyAppRemote != null) {
                 val uri = arr[0]
                 val emotion = arr[1]
+                CURR_EMOTION = emotionToAdverb(emotion)
                 mSpotifyAppRemote!!.getPlayerApi().play(uri)
                 Log.d("Spotify", "Playing playlist")
 
@@ -419,6 +436,16 @@ class RadioActivity() : AppCompatActivity(),
         const val HAPPY = "h"
         const val PASSIVE = "p"
         const val SLEEPY = "s"
+        var CURR_EMOTION = "Passively"
+        fun emotionToAdverb(emote: String): String {
+            var ret_val = ""
+            when (emote) {
+                "h" -> ret_val = "Happily"
+                "p" -> ret_val = "Passively"
+                "s" -> ret_val = "Sleepily"
+            }
+            return ret_val
+        }
 
         var currentUser: User? = null
 
