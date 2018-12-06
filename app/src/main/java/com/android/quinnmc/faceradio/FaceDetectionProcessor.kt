@@ -71,9 +71,10 @@ class FaceDetectionProcessor : VisionProcessorBase<List<FirebaseVisionFace>>() {
             //Deejay.updateMusic(face)
             //println("NEW FACE, NEW CALL")
             (Deejay as FaceDetectionListener).onNewFace(face)
-            val faceGraphic = FaceGraphic(graphicOverlay)
-            graphicOverlay.add(faceGraphic)
-            faceGraphic.updateFace(face, frameMetadata.cameraFacing)
+            // test
+//            val faceGraphic = FaceGraphic(graphicOverlay)
+//            graphicOverlay.add(faceGraphic)
+//            faceGraphic.updateFace(face, frameMetadata.cameraFacing)
         }
     }
 

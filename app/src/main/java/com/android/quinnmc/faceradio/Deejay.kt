@@ -49,7 +49,7 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
 
     fun safeAfterNewFace(face: FirebaseVisionFace) {
         //println("COUNTER: ${counter}")
-        if (prevFace == null || (counter > 50 && dominantEmotion(face) != dominantEmotion(prevFace!!))) {
+        if (prevFace == null || (counter > 200 && dominantEmotion(face) != dominantEmotion(prevFace!!))) {
             var rand = Random
             var uri = ""
             var rand_index = 0
@@ -103,7 +103,7 @@ object Deejay: FaceDetectionProcessor.FaceDetectionListener {
 
         if (leftEyeProb < 0.4 && rightEyeProb < 0.4) {
             return SLEEPY
-        } else if (smileProb > 0.3) {
+        } else if (smileProb > 0.5) {
             return HAPPY
         } else {
             return PASSIVE

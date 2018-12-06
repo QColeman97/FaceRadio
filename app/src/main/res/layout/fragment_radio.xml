@@ -10,13 +10,14 @@
             android:id="@+id/expression_graphic"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true"
-            android:layout_marginTop="107dp"/>
+            android:layout_marginTop="61dp" android:layout_above="@+id/current_track_title"
+            android:layout_marginBottom="18dp"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" android:id="@+id/current_track_label"
-            android:layout_marginBottom="142dp"
-            android:layout_centerHorizontal="true" android:textSize="24sp"/>
+            android:layout_marginBottom="188dp"
+            android:textSize="24sp" android:layout_alignStart="@+id/current_artist_label"/>
     <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:layout_centerHorizontal="true"
@@ -24,12 +25,13 @@
             android:layout_marginBottom="74dp" android:textSize="18sp"/>
     <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true" android:layout_marginBottom="109dp" android:id="@+id/by_title"/>
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true" android:layout_marginBottom="142dp" android:id="@+id/by_title"
+            android:layout_alignStart="@+id/current_track_label"/>
     <TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true" android:id="@+id/current_track_title"
-            android:layout_marginBottom="179dp"/>
+            android:layout_marginBottom="233dp" android:layout_alignStart="@+id/current_track_label"/>
 
 </RelativeLayout>
