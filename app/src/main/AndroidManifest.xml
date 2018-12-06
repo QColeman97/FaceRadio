@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.android.quinnmc.faceradio">
 
+    <!--Face icons made by "Chanut" and are found at https://www.flaticon.com/packs/rounded-emoticon-set
+    from Website: https://www.flaticon.com/
+    Flaticon is licensed by http://creativecommons.org/licenses/by/3.0/
+    Creative Commons BY 3.0 - CC 3.0-->
+
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -14,6 +19,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE"/>
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
+    <!-- tools:replace="android:appComponentFactory" -->
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -24,19 +30,28 @@
         <meta-data
                 android:name="com.google.firebase.ml.vision.DEPENDENCIES"
                 android:value="barcode,face,ocr,ica"/>
-        <activity
-                android:name=".MessageActivity"
-                android:label="Chat with Bob Jameson">
 
+        <activity
+                android:name=".MessageLogActivity"
+                android:label="Chat with Bob Jameson">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVTY"
+                    android:value=".RadioActivity"/>
         </activity>
         <activity
                 android:name=".ProfileActivity"
-                android:label="Bob Jameson's Profile">
-
+                android:label="Bob Jameson&apos;s Profile">
         </activity>
         <activity
-                android:name=".MainActivity"
+                android:name=".RadioActivity"
                 android:label="@string/app_name">
+
+            <!-- FIX -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
 
         </activity>
         <activity
@@ -48,7 +63,15 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".NewMessageActivity">
 
+            <!-- TODO: fix back button -->
+            <!--<meta-data
+                    android:name="android.support.PARENT_ACTIVTY"
+                    android:value=".RadioActivity"/>-->
+        </activity>
+        <activity android:name=".SettingsActivity">
+        </activity>
     </application>
 
 </manifest>

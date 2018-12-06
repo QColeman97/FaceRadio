@@ -1,35 +1,22 @@
 package com.android.quinnmc.faceradio
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.annotation.TargetApi
-import android.content.pm.PackageManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
-import android.app.LoaderManager.LoaderCallbacks
-import android.content.CursorLoader
-import android.content.Loader
-import android.database.Cursor
 import android.net.Uri
-import android.os.AsyncTask
-import android.os.Build
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.text.TextUtils
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.ArrayAdapter
-import android.widget.TextView
 
-import java.util.ArrayList
-import android.Manifest.permission.READ_CONTACTS
+import android.app.Activity
 import android.content.Intent
+import android.graphics.drawable.BitmapDrawable
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.*
 
 
 class LoginActivity : BaseActivity(), View.OnClickListener {
@@ -52,6 +39,30 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
         // [END initialize_auth]
+
+        select_photo_btn.setOnClickListener {
+            Log.d("LoginActivity", "Selecting photo")
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 0)
+        }
+    }
+
+    var selected_photo_uri: Uri? = null
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null) {
+            Log.d("LoginActivity", "Photo was selected")
+
+            selected_photo_uri = data.data // Location where image stored on device
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selected_photo_uri)
+
+            val bitmapDrawable = BitmapDrawable(bitmap)
+            select_photo_btn.setBackgroundDrawable(bitmapDrawable)
+        }
     }
 
     // [START on_start_check_user]
@@ -77,10 +88,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
+                    //val user = auth.currentUser
                     //intent here
-                    val main_intent = Intent(this, MainActivity::class.java)
-                    startActivity(main_intent)
+//                    val main_intent = Intent(this, RadioActivity::class.java)
+//                    startActivity(main_intent)
+
+                    uploadImgToFirebaseStorage()
 
                     //updateUI(user)
                 } else {
@@ -96,6 +109,46 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 // [END_EXCLUDE]
             }
         // [END create_user_with_email]
+    }
+
+    private fun uploadImgToFirebaseStorage() {
+        if (selected_photo_uri == null) return
+
+        val filename = UUID.randomUUID().toString()
+        val ref = FirebaseStorage.getInstance().getReference("/images/$filename")
+
+        ref.putFile(selected_photo_uri!!).addOnSuccessListener {
+            Log.d("LoginActivity", "Successfully uploaded image: ${it.metadata?.path}")
+
+            ref.downloadUrl.addOnSuccessListener {
+                it.toString()
+                Log.d("LoginActivity", "File location: $it")
+
+                saveUserToFirebaseDatabase(it.toString())
+            }
+        }
+        .addOnFailureListener {
+            // Do some logging here
+        }
+    }
+
+    private fun saveUserToFirebaseDatabase(profileImageUrl: String) {
+        val uid = FirebaseAuth.getInstance().uid ?: ""
+        val ref = FirebaseDatabase.getInstance().getReference("/users/$uid")
+
+        val user = User(uid, username.text.toString(), profileImageUrl,
+            arrayListOf<String>(), arrayListOf<String>(), arrayListOf<String>())
+        ref.setValue(user).addOnSuccessListener {
+            Log.d("LoginActivity", "Finally saved user to Firebase Database")
+
+            // OLD
+            //val main_intent = Intent(this, RadioActivity::class.java)
+            val main_intent = Intent(this, SettingsActivity::class.java)
+
+            // So back-button exits
+            //main_intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(main_intent)
+        }
     }
 
     private fun signIn(email: String, password: String) {
@@ -115,7 +168,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                     val user = auth.currentUser
                     //updateUI(user)
                     // intent
-                    val main_intent = Intent(this, MainActivity::class.java)
+                    val main_intent = Intent(this, RadioActivity::class.java)
                     startActivity(main_intent)
 
                 } else {

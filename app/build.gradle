@@ -20,12 +20,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    // Groupie
+    // Not necessary
+    androidExtensions {
+        experimental = true
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.android.support:appcompat-v7:28.0.0'
+    //implementation 'com.android.support:appcompat-v7:28.0.0-alpha3'
     implementation 'com.android.support:support-media-compat:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:exifinterface:28.0.0'
@@ -40,17 +47,38 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.5'
     //implementation 'com.firebaseui:firebase-ui-auth:2.4.0'
 
+    // Storage for profile pics
+    implementation 'com.google.firebase:firebase-storage:16.0.4'
+    implementation 'com.google.firebase:firebase-database:16.0.4'
+
     // ML Kit dependencies
-    implementation 'com.google.firebase:firebase-ml-vision:18.0.1'
-    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
-    implementation 'com.google.firebase:firebase-ml-vision-face-model:17.0.2'
-    implementation 'com.google.firebase:firebase-ml-model-interpreter:16.2.3'
-    implementation 'org.tensorflow:tensorflow-lite:1.10.0'
+//    implementation 'com.google.firebase:firebase-core:16.0.3'
+    implementation 'com.google.firebase:firebase-ml-common:16.1.2'
+    implementation 'com.google.firebase:firebase-ml-vision:17.0.0'
+    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:15.0.0'
+    implementation 'com.google.firebase:firebase-ml-model-interpreter:16.2.0'
+
+    // Broken version ML Kit dependencies
+//    implementation 'com.google.firebase:firebase-ml-vision:18.0.1'
+//    implementation 'com.google.firebase:firebase-ml-vision-image-label-model:17.0.2'
+//    implementation 'com.google.firebase:firebase-ml-vision-face-model:17.0.2'
+//    implementation 'com.google.firebase:firebase-ml-model-interpreter:16.2.3'
+//    implementation 'org.tensorflow:tensorflow-lite:1.10.0'
 
 //    compile project(':spotify-app-remote')
 //    compile "com.google.code.gson:gson:2.6.1"
     implementation project(':spotify-app-remote')
     implementation "com.google.code.gson:gson:2.6.1"
+
+    // Groupie - easy recycler views
+    implementation 'com.xwray:groupie:2.1.0'
+    // Not necessary
+//    implementation 'com.xwray:groupie-kotlin-android-extensions:2.3.0'
+
+    // Picasso - pictures
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'

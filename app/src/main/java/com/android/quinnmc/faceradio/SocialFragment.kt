@@ -1,129 +1,176 @@
 package com.android.quinnmc.faceradio
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.DividerItemDecoration
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.squareup.picasso.Picasso
+import com.xwray.groupie.GroupAdapter
+import com.xwray.groupie.Item
+import com.xwray.groupie.ViewHolder
+import kotlinx.android.synthetic.main.activity_new_message.*
 import kotlinx.android.synthetic.main.fragment_social.*
+import kotlinx.android.synthetic.main.user_row_new_message.view.*
 
 class SocialFragment : Fragment() {
 
-    private lateinit var listView: ListView
+    companion object {
+        val TAG = "SocialFragment"
+        // Friends
+        val USER_KEY = "USER_KEY"
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-//        return super.onCreateView(inflater, container, savedInstanceState)
-
-        val dummy_strings = listOf("Bob", "Susan")
-        val listItems = arrayOfNulls<String>(dummy_strings.size)
-        for (i in 0 until dummy_strings.size) {
-            listItems[i] = dummy_strings[i]
-        }
-//        val msgsView = findViewById<ListView>(R.id.message_list)
-
-        //val friendCustomAdapter = FriendCustomAdapter(this)
-        //val messageCustomAdapter = MessageCustomAdapter(this)
-        //val friendsAdapter = ArrayAdapter(activity, android.R.layout.simple_entry, listItems)
-        //val messagesAdapter = ArrayAdapter(activity, simple_entry, listItems)
-
-
-        val view = inflater.inflate(R.layout.fragment_social, container, false)
-//
-//        friend_list.setOnItemClickListener(AdapterView.OnItemClickListener() {
-//            override fun onItemClick(<Adapter>) {
-//
-//            }
-//        })
-
-        return view
+        super.onCreateView(inflater, container, savedInstanceState)
+        return inflater.inflate(R.layout.fragment_social, container, false)
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        recyclerview_latest_messages.adapter = msg_adapter
+        recyclerview_latest_messages.addItemDecoration(DividerItemDecoration(activity,
+            DividerItemDecoration.VERTICAL))
+
+        // Use newmsgactivity method for friends
+        recyclerview_friends.adapter = fnds_adapter
+        recyclerview_friends.addItemDecoration(DividerItemDecoration(activity,
+            DividerItemDecoration.VERTICAL))
+
+        msg_adapter.setOnItemClickListener { item, view ->
+            Log.d(TAG, "123")
+            val intent = Intent(activity, MessageLogActivity::class.java)
+
+            // Safe casting - only type of row in our table
+            val row = item as LatestMessageRow
+            intent.putExtra(NewMessageActivity.USER_KEY, row.chatPartnerUser)
+            startActivity(intent)
+        }
+
+        listenForLatestMessages()
+        fetchUsers()
+    }
+
+    val latestMessagesMap = HashMap<String, Message>()
+
+    private fun refreshRecyclerViewMessages() {
+        msg_adapter.clear()
+        // Add all new messages back
+        latestMessagesMap.values.forEach {
+            msg_adapter.add(LatestMessageRow(it))
+        }
+    }
+
+    private fun listenForLatestMessages() {
+        val fromId = FirebaseAuth.getInstance().uid
+        val ref = FirebaseDatabase.getInstance().getReference("/latest-messages/$fromId")
+        ref.addChildEventListener(object: ChildEventListener {
+
+            // Key is the firebase user id, so hashmap constantly being refreshed between users
+            override fun onChildAdded(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(Message::class.java) ?: return
+
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessages()
+
+                // OLD
+                //adapter.add(LatestMessageRow())
+            }
+
+            override fun onChildChanged(p0: DataSnapshot, p1: String?) {
+                val chatMessage = p0.getValue(Message::class.java) ?: return
+                latestMessagesMap[p0.key!!] = chatMessage
+                refreshRecyclerViewMessages()
+
+                // OLD
+                //adapter.add(LatestMessageRow())
+            }
+
+            override fun onChildRemoved(p0: DataSnapshot) {
+
+            }
+            override fun onCancelled(p0: DatabaseError) {
+
+            }
+            override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+
+            }
+        })
+    }
+
+    val msg_adapter = GroupAdapter<ViewHolder>()
+    val fnds_adapter = GroupAdapter<ViewHolder>()
+
+//    private fun setupDummyRows() {
+//
+//        adapter.add(LatestMessageRow())
+//        adapter.add(LatestMessageRow())
+//        adapter.add(LatestMessageRow())
+//        adapter.add(LatestMessageRow())
+//        adapter.add(LatestMessageRow())
+//
+//    }
 
     override fun onStart() {
         super.onStart()
-        friendSelect.setOnClickListener {
-            toProfile()
+        //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
+        new_msg_button.setOnClickListener {
+            toNewMessage()
         }
-        msgSelect.setOnClickListener {
-            toMessages()
-        }
-        //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
     }
 
-    private fun toProfile() {
-        //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
-        val bobIntent = Intent(activity, ProfileActivity::class.java)
-        startActivity(bobIntent)
-    }
-
-    private fun toMessages() {
-        //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
-        val bobIntent = Intent(activity, MessageActivity::class.java)
-        startActivity(bobIntent)
-    }
-
-//    private class FriendCustomAdapter(context: Context) : BaseAdapter() {
-//
-//        private val mContext: Context
-//
-//        init {
-//            this.mContext = context
-//        }
-//
-//        override fun getCount(): Int {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            return 5
-//        }
-//
-//        override fun getItem(position: Int): Any {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            return "friend"
-//        }
-//
-//        override fun getItemId(position: Int): Long {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            return position.toLong()
-//        }
-//
-//        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            val textView = TextView(mContext)
-//            textView.text = "ROW"
-//            return textView
-//        }
+    // FOR PROFILE
+//    private fun toProfile() {
+//        //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
+//        val bobIntent = Intent(activity, ProfileActivity::class.java)
+//        startActivity(bobIntent)
 //    }
 //
-//    private class MessageCustomAdapter(context: Context) : BaseAdapter() {
-//
-//        private val mContext: Context
-//
-//        init {
-//            this.mContext = context
-//        }
-//
-//        override fun getCount(): Int {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            return 5
-//        }
-//
-//        override fun getItem(position: Int): Any {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            return "message"
-//        }
-//
-//        override fun getItemId(position: Int): Long {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            return position.toLong()
-//        }
-//
-//        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-//            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-//            val textView = TextView(mContext)
-//            textView.text = "ROW"
-//            return textView
-//        }
-//    }
+
+    private fun toNewMessage() {
+        //Log.d("SOCIAL FRAGMENT", "MAKING INTENT TO PROFILE")
+        val newMsgIntent = Intent(activity, NewMessageActivity::class.java)
+        startActivity(newMsgIntent)
+    }
+
+    // Friends table
+    private fun fetchUsers() {
+        val ref = FirebaseDatabase.getInstance().getReference("/users")
+        ref.addListenerForSingleValueEvent(object: ValueEventListener {
+
+            override fun onDataChange(p0: DataSnapshot) {
+                val adapter = GroupAdapter<ViewHolder>()
+
+                p0.children.forEach {
+                    //Log.d("newMessage", it.toString())
+                    val user = it.getValue(User::class.java)
+                    if (user != null) {
+                        adapter.add(UserItem(user))
+                    }
+                }
+
+                adapter.setOnItemClickListener { item, view ->
+                    val userItem = item as UserItem
+
+                    val intent = Intent(view.context, ProfileActivity::class.java)
+                    //intent.putExtra(USER_KEY, item.user.username)
+                    intent.putExtra(USER_KEY, userItem.user)
+                    startActivity(intent)
+
+                    //finish()
+                }
+
+                recyclerview_friends.adapter = adapter
+            }
+
+            override fun onCancelled(p0: DatabaseError) {}
+        })
+    }
 }
