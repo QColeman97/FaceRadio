@@ -1,11 +1,13 @@
 package com.android.quinnmc.faceradio
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_radio.*
 
 class RadioFragment : Fragment() {
@@ -14,6 +16,7 @@ class RadioFragment : Fragment() {
     var currSong: String? = null
     var currArtist: String? = null
     var currEmotion: String? = null
+    //var currAlbumCoverBitmap: Bitmap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -22,6 +25,7 @@ class RadioFragment : Fragment() {
         currSong = arguments?.getString("track")
         currArtist = arguments?.getString("artist")
         currEmotion = arguments?.getString("emo")
+        //currAlbumCoverBitmap = arguments?.get("album_cover")
 
         return inflater.inflate(R.layout.fragment_radio, container, false)
     }
@@ -36,6 +40,10 @@ class RadioFragment : Fragment() {
             current_track_label.text = currSong
             by_title.text = "by"
             current_artist_label.text = currArtist
+//            if (currAlbumCoverURI != "") {
+//                Picasso.get().load(currAlbumCoverURI).into(album_cover)
+//            }
+           // album_cover.setImageBitmap()
         }
     }
 
@@ -63,6 +71,7 @@ class RadioFragment : Fragment() {
             args.putString("track", track)
             args.putString("artist", artist)
             args.putString("emo", emo)
+           // args.putString("album_cover", alb)
             val fragment = RadioFragment()
             fragment.arguments = args
             return fragment

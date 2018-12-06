@@ -21,6 +21,7 @@ import com.google.firebase.auth.FirebaseAuth
 //import jdk.nashorn.internal.runtime.ECMAException.getException
 //import org.junit.experimental.results.ResultMatchers.isSuccessful
 import android.content.Intent
+import android.graphics.Bitmap
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.startActivity
 import android.view.Menu
@@ -101,7 +102,8 @@ class RadioActivity() : AppCompatActivity(),
         when (item.itemId) {
             R.id.navigation_home -> {
 //                selectedFragment = RadioFragment()
-                selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist, currEmotion)
+                selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
+                    currEmotion)
 
                 supportFragmentManager.beginTransaction().
                     replace(R.id.fragment_container, selectedFragment).commit()
@@ -234,6 +236,16 @@ class RadioActivity() : AppCompatActivity(),
                                     // Set the text here
                                     currSong = track.name
                                     currArtist = track.artist.name
+                                    // Might be a useless call down below
+                                    //currAlbumCoverURI = track.imageUri.toString()
+
+                                    mSpotifyAppRemote!!.imagesApi.getImage(track.imageUri)
+                                        .setResultCallback {
+                                            if (selectedFragment is RadioFragment) {
+                                                selectedFragment.album_cover.setImageBitmap(it)
+                                            }
+                                        }
+
 
                                     // update user's latest here
                                     val latest_user = User(currentUser!!.uuid, currentUser!!.username,
@@ -395,8 +407,10 @@ class RadioActivity() : AppCompatActivity(),
         private var currFaceGraphic = R.drawable.passive_face
         private var currSong = ""
         private var currArtist = ""
+        private var currAlbumCoverBitmap: Bitmap? = null
         private var currEmotion = CURR_EMOTION
-        private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist, currEmotion)
+        private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
+            currEmotion)
 
 
         private var mSpotifyAppRemote: SpotifyAppRemote? = null
