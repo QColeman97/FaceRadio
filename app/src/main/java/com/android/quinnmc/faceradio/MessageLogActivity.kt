@@ -35,7 +35,7 @@ class MessageLogActivity: AppCompatActivity() {
         recyclerView_chatLog.adapter = adapter
 
         toUser = intent.getParcelableExtra<User>(NewMessageActivity.USER_KEY)
-        supportActionBar?.title = toUser?.username
+        supportActionBar?.title = "Chat with " + toUser?.username
 
         preSet = intent.getStringExtra(NewMessageActivity.MSG_KEY)
         editText_chatLog.setText(preSet, TextView.BufferType.EDITABLE)

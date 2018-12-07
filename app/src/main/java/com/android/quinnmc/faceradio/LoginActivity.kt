@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.storage.FirebaseStorage
 
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.notification_template_lines_media.view.*
 import java.util.*
 
 
@@ -32,14 +33,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         // Buttons
         email_sign_in_button.setOnClickListener(this)
         email_create_account_button.setOnClickListener(this)
-        //signOutButton.setOnClickListener(this)
-        //verifyEmailButton.setOnClickListener(this)
-
-        // [START initialize_auth]
-        // Initialize Firebase Auth
-        auth = FirebaseAuth.getInstance()
-        // [END initialize_auth]
-
         select_photo_btn.setOnClickListener {
             Log.d("LoginActivity", "Selecting photo")
 
@@ -47,6 +40,11 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             intent.type = "image/*"
             startActivityForResult(intent, 0)
         }
+
+        // [START initialize_auth]
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+        // [END initialize_auth]
     }
 
     var selected_photo_uri: Uri? = null
@@ -88,10 +86,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    //val user = auth.currentUser
-                    //intent here
-//                    val main_intent = Intent(this, RadioActivity::class.java)
-//                    startActivity(main_intent)
 
                     uploadImgToFirebaseStorage()
 
@@ -104,11 +98,8 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                     //updateUI(null)
                 }
 
-                // [START_EXCLUDE]
                 hideProgressDialog()
-                // [END_EXCLUDE]
             }
-        // [END create_user_with_email]
     }
 
     private fun uploadImgToFirebaseStorage() {
@@ -145,7 +136,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             //val main_intent = Intent(this, RadioActivity::class.java)
             val main_intent = Intent(this, SettingsActivity::class.java)
 
-            // So back-button exits
+            // Old - back-button exits
             //main_intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(main_intent)
         }
@@ -159,14 +150,12 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
         showProgressDialog()
 
-        // [START sign_in_with_email]
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "Firebase signInWithEmail:success")
                     val user = auth.currentUser
-                    //updateUI(user)
                     // intent
                     val main_intent = Intent(this, RadioActivity::class.java)
                     startActivity(main_intent)
@@ -176,17 +165,10 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                     Log.w(TAG, "Firebase signInWithEmail:failure", task.exception)
                     Toast.makeText(baseContext, "Authentication failed.",
                         Toast.LENGTH_SHORT).show()
-                    //updateUI(null)
                 }
 
-                // [START_EXCLUDE]
-                //if (!task.isSuccessful) {
-                //    status.setText(R.string.auth_failed)
-                //}
                 hideProgressDialog()
-                // [END_EXCLUDE]
             }
-        // [END sign_in_with_email]
     }
 
     private fun signOut() {

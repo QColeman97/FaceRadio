@@ -23,8 +23,6 @@ class NewMessageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_message)
 
-        supportActionBar?.title = "Select Friend"
-
         val adapter = GroupAdapter<ViewHolder>()
 
 //        adapter.add(UserItem())
@@ -34,6 +32,12 @@ class NewMessageActivity : AppCompatActivity() {
         recyclerView_newMessage.adapter = adapter
 
         optionalPreset = intent.getStringExtra(RadioFragment.USER_KEY)
+
+        if (optionalPreset == "") {
+            supportActionBar?.title = "Message a Friend"
+        } else {
+            supportActionBar?.title = "Share Song with a Friend"
+        }
 
         fetchUsers()
     }

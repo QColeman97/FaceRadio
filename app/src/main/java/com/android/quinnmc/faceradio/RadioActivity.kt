@@ -41,39 +41,19 @@ import kotlinx.android.synthetic.main.fragment_radio.view.*
 
 
 /************************************
- *  ADDITIONAL INFO FOR MILESTONE 3:
+ *  FACE RADIO RUNNING INFO:
  *  Setup before-hand to use this app successfully,
- *  1) Have Spotify installed on the running device, and be logged in w/in the Spotify app
- *          -- making a non-Premium account works fine, if you don't already have one
- *  2) If using the emulator, configure your AVD camera's front and back to be Webcam0 (laptop's camera)
- *
- *  * Unfortunate emulator bug I couldn't get around w/o this workaround:
- *      For MLKit to detect your face,
- *      you MUST tilt either your head 90 deg right or webcam 90 left
- *
- *  (MLKit activity should be seen by filtering "MLKit" in Logcat)
- *  (Bug to know: Now can only detect a face in one of first frames received,
- *      but you should be able to see something like this: (copy/pasted from my Logcat))
- *   D/MLKit - Face Det Proc: HAPPINESS PROBABILITY = 0.029783526
- *   D/MLKit - Face Det Proc: LEFT EYE OPEN PROBABILITY = 0.92879176
- *   D/MLKit - Face Det Proc: RIGHT EYE OPEN PROBABILITY = 0.6806507
- *
- *  Milestone 3 functionality summary:
- *  Log you into firebase, play music after sign in,
- *  start attempting to read your face, let you go to each page
+ *  1) Have Spotify installed on the running device, with a Spotify account created AND signed in on
+ *          -- having a non-Premium account works fine, if you don't already have one
+ *  2) Please run in the emulator, and configure your AVD camera's front and back to be Webcam0 (laptop's camera)
  *
  *  From profile and msg activites, can get back with the system back-button
- *  Bug: initial fragment "radio" doesn't appear until you go to another fragment and back
- *
  * **********************************/
 
 
 class RadioActivity() : AppCompatActivity(),
         ActivityCompat.OnRequestPermissionsResultCallback,
         RadioFragment.RadioFragmentListener {
-
-//    // Spotify Will do Android's single-sign on, so end Spotify quick-start here
-//    private var mSpotifyAppRemote: SpotifyAppRemote? = null
 
     // Firebase user vars
     val uid = FirebaseAuth.getInstance().uid
@@ -98,20 +78,14 @@ class RadioActivity() : AppCompatActivity(),
         }
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-//        selectedFragment = RadioFragment()
         when (item.itemId) {
             R.id.navigation_home -> {
-//                selectedFragment = RadioFragment()
                 selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
                     currEmotion)
 
                 supportFragmentManager.beginTransaction().
                     replace(R.id.fragment_container, selectedFragment).commit()
 
-
-                // Invoke findViewById on null object reference
-//                selectedFragment?.current_track_label.text = currSong
-//                selectedFragment?.current_artist_label.text = currArtist
             }
             R.id.navigation_dashboard -> {
                 selectedFragment = SocialFragment()
@@ -141,10 +115,8 @@ class RadioActivity() : AppCompatActivity(),
         // To remove the camera stream feedback
         firePreview.visibility = View.INVISIBLE
 
-        // Comment out to expose firepreview
-//        selectedFragment = RadioFragment()
-        supportFragmentManager.beginTransaction().
-            replace(R.id.fragment_container, selectedFragment!!).commit()
+//        supportFragmentManager.beginTransaction().
+//            replace(R.id.fragment_container, selectedFragment!!).commit()
     }
 
     private fun fetchCurrentUser() {
@@ -164,6 +136,9 @@ class RadioActivity() : AppCompatActivity(),
     private fun verifyUserIsLoggedIn() {
         val uid = FirebaseAuth.getInstance().uid
         if (uid == null) {
+            cameraSource?.release()
+            SpotifyAppRemote.disconnect(mSpotifyAppRemote)
+
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK.or(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
@@ -223,6 +198,11 @@ class RadioActivity() : AppCompatActivity(),
     override fun onStart() {
         super.onStart()
 
+        selectedFragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
+            currEmotion)
+        supportFragmentManager.beginTransaction().
+            replace(R.id.fragment_container, selectedFragment!!).commit()
+
         val connectionParams =
             ConnectionParams.Builder(CLIENT_ID)
                 .setRedirectUri(REDIRECT_URI)
@@ -236,17 +216,8 @@ class RadioActivity() : AppCompatActivity(),
                     mSpotifyAppRemote = spotifyAppRemote
                     Log.d("Spotify", "Connected! Yay!")
 
-                    // Now you can start interacting with App Remote
-
-                    // TEMPORARY - connected() PLAYS MUSIC!
-                    //playStation()
+                    // First interaction w/ app remote
                     mSpotifyAppRemote!!.getPlayerApi().setShuffle(true)
-
-                    // TODO: play and pause buttons
-//                    mSpotifyAppRemote!!.getPlayerApi().pause()
-//                    mSpotifyAppRemote!!.getPlayerApi().skipNext()
-//                    mSpotifyAppRemote!!.getPlayerApi().skipPrevious()
-
 
                     // Subscribe to PlayerState
                     mSpotifyAppRemote!!.getPlayerApi()
@@ -294,6 +265,12 @@ class RadioActivity() : AppCompatActivity(),
                                     // Block could be deleted later?
                                     if (selectedFragment is RadioFragment) {
                                         println("SELECTED FRAG IS RADIO " + track.name + " " + track.artist.name)
+
+                                        (selectedFragment as RadioFragment).currEmotion = currEmotion
+                                        (selectedFragment as RadioFragment).currSong = currSong
+                                        (selectedFragment as RadioFragment).currArtist = currArtist
+                                        (selectedFragment as RadioFragment).currFaceId = currFaceGraphic
+
                                         selectedFragment.current_track_label.text = currSong
                                         selectedFragment.current_artist_label.text = currArtist
 //                                        track.album
@@ -311,6 +288,13 @@ class RadioActivity() : AppCompatActivity(),
                     // Something went wrong when attempting to connect! Handle errors here
                 }
             })
+
+//        if (selectedFragment is RadioFragment) {
+//            (selectedFragment as RadioFragment).currEmotion = currEmotion
+//            (selectedFragment as RadioFragment).currSong = currSong
+//            (selectedFragment as RadioFragment).currArtist = currArtist
+//            (selectedFragment as RadioFragment).currFaceId = currFaceGraphic
+//        }
     }
 
 //    fun playStation(uri: String) {
@@ -445,8 +429,9 @@ class RadioActivity() : AppCompatActivity(),
         private var currArtist = ""
         private var currAlbumCoverBitmap: Bitmap? = null
         private var currEmotion = CURR_EMOTION
-        private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
-            currEmotion)
+//        private var selectedFragment: Fragment = RadioFragment.newInstance(currFaceGraphic, currSong, currArtist,
+//            currEmotion)
+        private var selectedFragment = Fragment()
 
         override fun onNewPlaylist(arr: Array<String>) {
             if (mSpotifyAppRemote != null) {
@@ -456,18 +441,10 @@ class RadioActivity() : AppCompatActivity(),
                 mSpotifyAppRemote!!.getPlayerApi().play(uri)
                 //mSpotifyAppRemote!!.getPlayerApi().resume()
                 Log.d("Spotify", "PLAYING PLAYLIST")
-                selectedFragment.play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_pause)
-
-
-
-                //selectedFragment.expression_graphic.visibility = View.VISIBLE
-//                selectedFragment.current_track_title.visibility = View.VISIBLE
-//                selectedFragment.current_track_label.visibility = View.VISIBLE
-//                selectedFragment.by_title.visibility = View.VISIBLE
-//                selectedFragment.current_artist_label.visibility = View.VISIBLE
 
                 val currPlay = URIToMusicMap[uri]
                 if (selectedFragment is RadioFragment) {
+                    selectedFragment.play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_pause)
                     when (emotion) {
                         HAPPY -> selectedFragment.expression_graphic.setImageResource(R.drawable.happy_face)
                         PASSIVE -> selectedFragment.expression_graphic.setImageResource(R.drawable.passive_face)

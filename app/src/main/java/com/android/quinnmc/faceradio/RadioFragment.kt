@@ -13,7 +13,6 @@ import kotlinx.android.synthetic.main.fragment_radio.*
 class RadioFragment : Fragment() {
 
     interface RadioFragmentListener{
-//        fun onPlayPause(pause: Boolean)
         fun onPlayPause()
         fun onSkipNext()
         fun onSkipPrev()
@@ -23,9 +22,6 @@ class RadioFragment : Fragment() {
     var currSong: String? = null
     var currArtist: String? = null
     var currEmotion: String? = null
-    //var paused = false
-
-    //var currAlbumCoverBitmap: Bitmap? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -34,7 +30,6 @@ class RadioFragment : Fragment() {
         currSong = arguments?.getString("track")
         currArtist = arguments?.getString("artist")
         currEmotion = arguments?.getString("emo")
-        //currAlbumCoverBitmap = arguments?.get("album_cover")
 
         return inflater.inflate(R.layout.fragment_radio, container, false)
     }
@@ -43,15 +38,7 @@ class RadioFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         play_pause_btn.setOnClickListener {
-            //paused = !paused
-//            (activity as RadioActivity).onPlayPause(paused)
             (activity as RadioActivity).onPlayPause()
-
-//            if (paused) {
-//                play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_play)
-//            } else {
-//                play_pause_btn.setBackgroundResource(android.R.drawable.ic_media_pause)
-//            }
         }
         next_song_btn.setOnClickListener {
             (activity as RadioActivity).onSkipNext()
@@ -68,10 +55,6 @@ class RadioFragment : Fragment() {
             current_track_label.text = currSong
             by_title.text = "by"
             current_artist_label.text = currArtist
-//            if (currAlbumCoverURI != "") {
-//                Picasso.get().load(currAlbumCoverURI).into(album_cover)
-//            }
-           // album_cover.setImageBitmap()
         }
     }
 
